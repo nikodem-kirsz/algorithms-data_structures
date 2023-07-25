@@ -32,35 +32,21 @@ dataGenerator.next().value
     .then(result => dataGenerator.next(result).value)
     .then(result => console.log(result))
 
-
-    function fetchData(url) {
-        return new Promise((resolve) => {
-          setTimeout(() => resolve(`Data from ${url}`), 1000);
-        });
-      }
+    
       
-    function* fetchMultiData(urls) {
-        for (const url of urls) {
-            const data = yield fetchData(url);
-            yield data;
+void async function generate() {
+    async function* foo() {
+        yield await fetchData('a');
+        yield await Promise.resolve('b');
+        yield await fetchData('c');
+    }
+    let str = ''
+    return (async () => {
+        for await (const val of foo()) {
+            str = str + val;
         }
-      }
-      
-      const dataUrls = [
-        'https://api.example.com/data1',
-        'https://api.example.com/data2',
-        'https://api.example.com/data3',
-      ];
-      
-      const dataIterator = fetchMultiData(dataUrls);
-      
-      function handleNext(value) {
-        const result = dataIterator.next(value);
-        if (!result.done) {
-            console.log(result.value)
-        //   result.value.then(handleNext(result));
-        }
-      }
-      
-      handleNext();
+        console.log(str);
+    })()
+}()
+    
       
